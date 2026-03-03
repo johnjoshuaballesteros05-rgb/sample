@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lubang Bay Hotel · Rooms & Suites</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --white-facade: #f5f2ee;
+            --wood-warm: #b87d4b;
+            --wood-light: #d4a06a;
+            --wood-pale: #e8c99a;
+            --sign-red: #c94b2a;
+            --sign-orange: #e05a30;
+            --sign-glow: rgba(201, 75, 42, 0.35);
+            --iron-dark: #1a1a1a;
+            --sky-dark: #2c3e4a;
+            --accent-strip: #c0874a;
+            --border: rgba(255,255,255,0.1);
+            --muted: rgba(255,255,255,0.5);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Jost', sans-serif;
+            background: var(--sky-dark);
+            color: var(--white-facade);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .bg-scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+        .bg-image {
+            position: absolute; inset: 0;
+            background: url('image.jpg') center 20%/cover no-repeat;
+            transform: scale(1.08);
+            animation: slowDrift 28s ease-in-out infinite alternate;
+            filter: brightness(0.52) saturate(0.8);
+        }
+        @keyframes slowDrift {
+            from { transform: scale(1.08) translateX(0); }
+            to   { transform: scale(1.12) translateX(-1.5%); }
+        }
+        .bg-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg,
+                rgba(44,62,74,0.60) 0%,
+                rgba(40,55,65,0.38) 30%,
+                rgba(28,40,48,0.65) 65%,
+                rgba(18,26,31,0.93) 100%
+            );
+        }
+        .bg-sign-glow {
+            position: absolute; top: 42%; left: 50%;
+            transform: translate(-50%,-50%);
+            width: 640px; height: 220px;
+            background: radial-gradient(ellipse, rgba(201,75,42,0.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .page { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* NAV - with hamburger menu (same as index) */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2rem 4rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            background: rgba(18,26,31,0.45);
+            backdrop-filter: blur(12px);
+            animation: fadeDown 0.8s ease both;
+            position: relative;
+        }
+        @keyframes fadeDown {
+            from { opacity:0; transform:translateY(-14px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        .nav-brand { display:flex; flex-direction:column; gap:2px; }
+        .nav-brand-name {
+            font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:500;
+            letter-spacing:0.1em; text-transform:uppercase; color:var(--white-facade);
+        }
+        .nav-brand-sub {
+            font-size:0.62rem; letter-spacing:0.22em; text-transform:uppercase;
+            color:var(--sign-orange); opacity:0.85;
+        }
+        
+        /* Desktop navigation */
+        .nav-links {
+            display: flex;
+            gap: 2.8rem;
+        }
+        .nav-links a {
+            font-size:0.75rem; letter-spacing:0.16em; text-transform:uppercase;
+            color:rgba(245,242,238,0.6); text-decoration:none; transition:color 0.2s;
+            position:relative;
+        }
+        .nav-links a::after {
+            content:''; position:absolute; bottom:-4px; left:0; right:0; height:1px;
+            background:var(--wood-warm); transform:scaleX(0); transform-origin:left; transition:transform 0.3s;
+        }
+        .nav-links a:hover { color:var(--white-facade); }
+        .nav-links a:hover::after { transform:scaleX(1); }
+        
+        /* Book button */
+        .book-btn {
+            font-family:'Jost',sans-serif; font-size:0.72rem; font-weight:500;
+            letter-spacing:0.18em; text-transform:uppercase;
+            color:var(--iron-dark);
+            background: linear-gradient(135deg, var(--wood-warm), var(--wood-light));
+            border:none; border-radius:2px; padding:0.78rem 2rem; cursor:pointer;
+            transition:0.2s; box-shadow:0 6px 20px rgba(184,125,75,0.3);
+            white-space: nowrap;
+        }
+        .book-btn:hover {
+            background:linear-gradient(135deg, var(--wood-light), var(--wood-pale));
+            transform:translateY(-1px);
+        }
+
+        /* Hamburger menu icon - hidden on desktop */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+            z-index: 1001;
+        }
+        .hamburger span {
+            width: 30px;
+            height: 2px;
+            background-color: var(--white-facade);
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+        
+        /* Mobile menu overlay */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 70%;
+            max-width: 350px;
+            height: 100vh;
+            background: rgba(18,26,31,0.98);
+            backdrop-filter: blur(12px);
+            border-left: 1px solid rgba(255,255,255,0.08);
+            z-index: 1000;
+            padding: 6rem 2rem 2rem;
+            transition: right 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .mobile-menu.active {
+            right: 0;
+        }
+        .mobile-menu a {
+            font-size: 1.1rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(245,242,238,0.7);
+            text-decoration: none;
+            transition: color 0.2s;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 1rem;
+        }
+        .mobile-menu a:hover {
+            color: var(--white-facade);
+        }
+        .mobile-menu .book-btn-mobile {
+            margin-top: 1rem;
+            background: linear-gradient(135deg, var(--wood-warm), var(--wood-light));
+            color: var(--iron-dark);
+            border: none;
+            border-radius: 2px;
+            padding: 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        /* Overlay background when menu is open */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+            backdrop-filter: blur(3px);
+        }
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* BUILDING STRIP */
+        .building-strip {
+            height:3px; width:100%;
+            background:linear-gradient(90deg,
+                transparent 0%, var(--accent-strip) 15%, var(--wood-light) 45%,
+                var(--wood-warm) 55%, var(--accent-strip) 85%, transparent 100%
+            );
+            opacity:0.45;
+        }
+
+        /* HERO */
+        .hero {
+            flex:1; padding:5rem 4rem 3rem;
+            max-width:1400px; width:100%; margin:0 auto;
+        }
+        .tag-row {
+            display:flex; align-items:center; gap:1.4rem;
+            margin-bottom:2rem; animation:fadeUp 0.9s 0.2s ease both;
+            flex-wrap: wrap;
+        }
+        .tag-pill {
+            font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase;
+            color:var(--white-facade);
+            border:1px solid rgba(201,75,42,0.35);
+            background:rgba(201, 74, 42, 0.336);
+            padding:0.32rem 1rem; border-radius:100px;
+            display:flex; align-items:center; gap:0.5rem;
+        }
+        .tag-pill i { font-size:0.55rem; }
+        .tag-dot { width:3px; height:3px; border-radius:50%; background:rgba(255,255,255,0.22); }
+        .tag-plain { font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase; color:SOLID rgba(255, 255, 255, 0.807) }
+        @keyframes fadeUp {
+            from { opacity:0; transform:translateY(20px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        .hero-title {
+            font-family:'Cormorant Garamond',serif; font-weight:300; line-height:0.94;
+            margin-bottom:1.6rem; animation:fadeUp 0.9s 0.32s ease both;
+        }
+        .hero-title .t1 {
+            font-size:clamp(4rem,8vw,7.5rem); display:block;
+            letter-spacing:-0.01em; color:var(--white-facade);
+        }
+        .hero-title .t2 {
+            font-size:clamp(2.8rem,5.5vw,5rem); display:block;
+            font-style:italic; font-weight:300; color:var(--sign-orange);
+            letter-spacing:0.02em;
+            text-shadow:0 0 40px var(--sign-glow), 0 0 80px rgba(201,75,42,0.12);
+        }
+        .hero-title .t3 {
+            font-size:clamp(1rem,2vw,1.6rem); display:block;
+            font-weight:300; letter-spacing:0.22em; text-transform:uppercase;
+            color:var(--wood-light); margin-top:1rem;
+        }
+        .hero-desc {
+            font-size:1rem; font-weight:300; line-height:1.75;
+            color:rgba(245,242,238,0.58); max-width:500px;
+            margin-bottom:3rem; animation:fadeUp 0.9s 0.48s ease both;
+        }
+        .stats-row {
+            display:flex; align-items:center; gap:3.5rem;
+            margin-bottom:3.5rem; animation:fadeUp 0.9s 0.58s ease both;
+            flex-wrap: wrap;
+        }
+        .stat { display:flex; flex-direction:column; gap:0.25rem; }
+        .stat-number {
+            font-family:'Cormorant Garamond',serif; font-size:2.8rem;
+            font-weight:400; line-height:1; color:var(--white-facade);
+        }
+        .stat-stars { display:flex; gap:2px; }
+        .stat-stars i { color:var(--sign-orange); font-size:0.72rem; }
+        .stat-label { font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); }
+        .stat-divider {
+            width:1px; height:44px;
+            background:linear-gradient(180deg, transparent, rgba(255,255,255,0.14), transparent);
+        }
+        .cta-row {
+            display:flex; align-items:center; gap:1.5rem;
+            animation:fadeUp 0.9s 0.68s ease both;
+            flex-wrap: wrap;
+        }
+        .cta-primary {
+            font-family:'Jost',sans-serif; font-size:0.72rem; font-weight:500;
+            letter-spacing:0.2em; text-transform:uppercase;
+            color:var(--iron-dark);
+            background:linear-gradient(135deg, var(--wood-warm), var(--wood-light));
+            border:none; padding:1.05rem 2.8rem; border-radius:2px; cursor:pointer;
+            transition:0.2s; box-shadow:0 8px 24px rgba(184,125,75,0.28);
+        }
+        .cta-primary:hover { transform:translateY(-2px); box-shadow:0 12px 32px rgba(184,125,75,0.38); }
+        .cta-secondary {
+            font-size:0.72rem; font-weight:400; letter-spacing:0.18em; text-transform:uppercase;
+            color:rgba(245,242,238,0.5); background:none;
+            border:1px solid rgba(245,242,238,0.14);
+            padding:1.05rem 2.4rem; border-radius:2px; cursor:pointer; transition:0.2s;
+        }
+        .cta-secondary:hover { color:var(--white-facade); border-color:rgba(245,242,238,0.28); }
+
+        /* ROOMS GRID */
+        .rooms-grid {
+            padding:4rem 4rem 2rem;
+            max-width:1400px; width:100%; margin:0 auto;
+            display:grid; grid-template-columns:repeat(3,1fr);
+            gap:1.5px; background:rgba(255,255,255,0.06);
+            border-top:1px solid rgba(255,255,255,0.07);
+            animation:fadeUp 0.9s 0.78s ease both;
+        }
+        .room-card {
+            background:rgba(18,26,31,0.90); padding:2.5rem 2.2rem;
+            position:relative; overflow:hidden; transition:background 0.3s;
+        }
+        .room-card::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:2.5px;
+            transform:scaleX(0); transform-origin:left; transition:transform 0.4s;
+        }
+        .room-card:nth-child(1)::before { background:linear-gradient(90deg, var(--sign-red), var(--sign-orange)); }
+        .room-card:nth-child(2)::before { background:linear-gradient(90deg, var(--wood-warm), var(--wood-light)); }
+        .room-card:nth-child(3)::before { background:linear-gradient(90deg, var(--sign-red), var(--sign-orange)); }
+        .room-card:hover { background:rgba(24,34,40,0.96); }
+        .room-card:hover::before { transform:scaleX(1); }
+        .room-icon {
+            width:40px; height:40px;
+            border:1px solid rgba(184,125,75,0.28);
+            border-radius:6px; display:flex; align-items:center; justify-content:center;
+            margin-bottom:1.5rem; color:var(--wood-light); font-size:0.95rem; transition:0.3s;
+        }
+        .room-card:hover .room-icon {
+            border-color:rgba(184,125,75,0.65); background:rgba(184,125,75,0.1);
+        }
+        .room-title {
+            font-family:'Cormorant Garamond',serif; font-size:1.6rem;
+            font-weight:400; margin-bottom:0.3rem; color:var(--white-facade);
+        }
+        .room-badge {
+            font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase;
+            color:var(--sign-orange); margin-bottom:0.8rem;
+        }
+        .room-desc {
+            font-size:0.83rem; font-weight:300; line-height:1.7; color:rgba(245,242,238,0.48);
+            margin-bottom:1.5rem;
+        }
+        .room-footer {
+            display:flex; align-items:center; gap:1rem; font-size:0.7rem;
+            color:rgba(255,255,255,0.35); border-top:1px solid rgba(255,255,255,0.05);
+            padding-top:1.2rem; margin-top:0.5rem;
+        }
+        .room-footer i { color:var(--wood-warm); margin-right:0.3rem; }
+
+        /* FAQ */
+        .faq-strip {
+            background:rgba(13,19,23,0.9); border-top:1px solid rgba(255,255,255,0.06);
+            padding:3rem 4rem; max-width:1400px; width:100%; margin:0 auto;
+            animation:fadeUp 0.9s 0.88s ease both;
+        }
+        .faq-label {
+            font-size:0.62rem; letter-spacing:0.25em; text-transform:uppercase;
+            color:var(--sign-orange); opacity:0.7; margin-bottom:1.8rem;
+            display:flex; align-items:center; gap:0.8rem;
+        }
+        .faq-label::after {
+            content:''; flex:1; max-width:100px; height:1px;
+            background:rgba(201,75,42,0.2);
+        }
+        .faq-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; }
+        .faq-item {
+            border-left:2px solid rgba(201,75,42,0.28); padding-left:1.5rem; transition:border-color 0.3s;
+        }
+        .faq-item:nth-child(2) { border-left-color:rgba(184,125,75,0.28); }
+        .faq-item:hover { border-left-color:var(--sign-orange); }
+        .faq-item:nth-child(2):hover { border-left-color:var(--wood-warm); }
+        .faq-q { font-size:0.88rem; font-weight:400; margin-bottom:0.4rem; color:rgba(245,242,238,0.82); }
+        .faq-a { font-size:0.8rem; font-weight:300; line-height:1.65; color:rgba(245,242,238,0.42); }
+
+        /* REVIEW */
+        .review-bar {
+            border-top:1px solid rgba(255,255,255,0.06);
+            padding:2.5rem 4rem; max-width:1400px; width:100%; margin:0 auto;
+            display:flex; align-items:flex-start; gap:2.5rem;
+            animation:fadeUp 0.9s 0.98s ease both;
+            flex-wrap: wrap;
+        }
+        .review-red-line {
+            width:3px; min-height:90px; flex-shrink:0;
+            background:linear-gradient(180deg, var(--sign-red), transparent);
+        }
+        .review-meta { display:flex; flex-direction:column; gap:0.3rem; min-width:120px; }
+        .review-meta-label { font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); }
+        .review-stars i { color:var(--sign-orange); font-size:0.68rem; }
+        .review-meta-source { font-size:0.75rem; color:rgba(245,242,238,0.5); }
+        .review-text {
+            font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-style:italic;
+            font-weight:300; line-height:1.6; color:rgba(245,242,238,0.75); flex:1;
+            min-width: 250px;
+        }
+        .review-response-block {
+            flex:1; background:rgba(201,75,42,0.05);
+            border:1px solid rgba(201,75,42,0.15);
+            border-radius:3px; padding:1.2rem 1.5rem;
+            min-width: 250px;
+        }
+        .review-resp-label {
+            font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase;
+            color:var(--sign-orange); opacity:0.7; margin-bottom:0.5rem;
+        }
+        .review-resp-text { font-size:0.83rem; font-weight:300; line-height:1.7; color:rgba(245,242,238,0.58); }
+
+        /* FOOTER */
+        .footer-row {
+            border-top:1px solid rgba(255,255,255,0.06);
+            padding:1.8rem 4rem; max-width:1400px; width:100%; margin:0 auto;
+            display:flex; align-items:center; justify-content:space-between;
+            gap:2rem; flex-wrap:wrap;
+            animation:fadeUp 0.9s 1.05s ease both;
+        }
+        .footer-address { display:flex; align-items:center; gap:0.75rem; font-size:0.8rem; color:rgba(245,242,238,0.45); }
+        .footer-address i { color:var(--wood-light); font-size:0.7rem; }
+        .footer-missing { display:flex; gap:1.2rem; flex-wrap: wrap; }
+        .missing-tag {
+            font-size:0.7rem; color:rgba(245,242,238,0.28);
+            border:1px dashed rgba(245,242,238,0.1);
+            padding:0.32rem 0.9rem; border-radius:100px;
+            display:flex; align-items:center; gap:0.45rem;
+        }
+        .missing-tag i { font-size:0.62rem; opacity:0.5; }
+        .photo-tag { font-size:0.7rem; color:rgba(245,242,238,0.38); display:flex; align-items:center; gap:0.45rem; }
+
+        /* MESSAGE ICON WATERMARK */
+        .message-watermark {
+            position:fixed; bottom:1rem; right:1.5rem;
+            font-size:0.7rem; letter-spacing:0.1em; color:rgba(245,242,238,0.5);
+            background:rgba(201, 75, 42, 0.25); 
+            backdrop-filter:blur(8px);
+            padding:0.4rem 1.2rem;
+            border-radius:60px;
+            border:1px solid rgba(255,255,255,0.15);
+            z-index:100;
+            display:flex;
+            align-items:center;
+            gap:0.6rem;
+            box-shadow:0 6px 16px rgba(0,0,0,0.3);
+        }
+        .message-watermark i {
+            color:var(--wood-pale);
+            font-size:0.85rem;
+            filter:drop-shadow(0 0 6px var(--sign-glow));
+        }
+
+        /* Mobile responsive */
+        @media (max-width:900px) {
+            nav { 
+                padding: 1.5rem 2rem; 
+            }
+            .nav-links, nav .book-btn {
+                display: none;
+            }
+            .hamburger {
+                display: flex;
+            }
+            .hero { padding:3rem 2rem 2rem; }
+            .rooms-grid { grid-template-columns:1fr; padding:2rem; }
+            .faq-strip { padding:2rem; }
+            .faq-grid { grid-template-columns:1fr; gap:1.5rem; }
+            .review-bar { flex-direction:column; padding:2rem; }
+            .footer-row { padding:1.5rem 2rem; flex-direction:column; align-items:flex-start; }
+            .stats-row {
+                gap: 2rem;
+            }
+            .stat-divider {
+                display: none;
+            }
+            .stat {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-scene">
+    <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
+    <div class="bg-sign-glow"></div>
+</div>
+
+<div class="page">
+    <nav>
+        <div class="nav-brand">
+            <span class="nav-brand-name">Lubang Bay Hotel</span>
+            <span class="nav-brand-sub">Occidental Mindoro · Rooms</span>
+        </div>
+        
+        <!-- Desktop Navigation -->
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="rooms.html" style="color:var(--white-facade);">Rooms</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="location.html">Location</a>
+            <a href="reviews.html">Reviews</a>
+        </div>
+        <button class="book-btn">Book Your Stay</button>
+        
+        <!-- Hamburger Icon for Mobile -->
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html">Home</a>
+        <a href="rooms.html">Rooms</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="location.html">Location</a>
+        <a href="reviews.html">Reviews</a>
+        <div class="book-btn-mobile">Book Your Stay</div>
+    </div>
+    
+    <!-- Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+    
+    <div class="building-strip"></div>
+
+    <!-- Rooms Hero -->
+    <section class="hero">
+        <div class="tag-row">
+            <div class="tag-pill"><i class="fas fa-bed"></i> 3 Room Types</div>
+            <div class="tag-dot"></div>
+            <span class="tag-plain">Bay View</span>
+            <div class="tag-dot"></div>
+            <span class="tag-plain">Tilik Rd</span>
+        </div>
+        <h1 class="hero-title">
+            <span class="t1">Rooms & Suites</span>
+            <span class="t2">By the bay</span>
+            <span class="t3">Lubang, Occidental Mindoro</span>
+        </h1>
+        <p class="hero-desc">
+            Choose from our selection of rooms — each offering bay views, modern comfort, and the warm hospitality of Lubang. Perfect for relaxation.
+        </p>
+        <div class="stats-row">
+            <div class="stat">
+                <span class="stat-number">4.9</span>
+                <div class="stat-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                </div>
+                <span class="stat-label">Room Rating</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+                <span class="stat-number">12</span>
+                <span class="stat-label">Total Rooms</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat">
+                <span class="stat-number">4F</span>
+                <span class="stat-label">Elevator Access</span>
+            </div>
+        </div>
+        <div class="cta-row">
+            <button class="cta-primary">Check Rates</button>
+            <button class="cta-secondary">Guest Photos</button>
+        </div>
+    </section>
+
+    <!-- ROOMS GRID (three rooms) -->
+    <div class="rooms-grid">
+        <div class="room-card">
+            <div class="room-icon"><i class="fas fa-water"></i></div>
+            <div class="room-title">Bayfront Deluxe</div>
+            <div class="room-badge">⭐ Best View</div>
+            <div class="room-desc">Spacious balcony overlooking the bay. King-size bed, modern shower, and serene atmosphere.</div>
+            <div class="room-footer"><i class="fas fa-vector-square"></i> 32m² · private bath</div>
+        </div>
+        <div class="room-card">
+            <div class="room-icon"><i class="fas fa-tree"></i></div>
+            <div class="room-title">Garden View</div>
+            <div class="room-badge">🌿 Overlooking gardens</div>
+            <div class="room-desc">View of Lubang's natural greenery. Two queen beds, perfect for families or groups.</div>
+            <div class="room-footer"><i class="fas fa-vector-square"></i> 38m² · two beds</div>
+        </div>
+        <div class="room-card">
+            <div class="room-icon"><i class="fas fa-home"></i></div>
+            <div class="room-title">Standard · Balcony</div>
+            <div class="room-badge">🛏️ Cozy & affordable</div>
+            <div class="room-desc">Bright room with private balcony. Modern design, warm lighting, and comfortable bedding.</div>
+            <div class="room-footer"><i class="fas fa-vector-square"></i> 24m² · fan cooling</div>
+        </div>
+    </div>
+    <div class="building-strip"></div>
+
+    <!-- FAQ specific sa kuwarto -->
+    <div class="faq-strip">
+        <div class="faq-label">Room FAQs</div>
+        <div class="faq-grid">
+            <div class="faq-item">
+                <div class="faq-q">Does every room have air conditioning?</div>
+                <div class="faq-a">Yes, all rooms have A/C and ceiling fans. Cool and fresh even on warm days.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">Can I request an extra bed?</div>
+                <div class="faq-a">Possible in Bayfront and Garden View rooms. Extra charge applies — official rates coming soon.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">Is there a restaurant on site?</div>
+                <div class="faq-a">Yes — ground floor restaurant serves breakfast and dinner. Room service available soon.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REVIEW block tungkol sa kuwarto -->
+    <div class="review-bar">
+        <div class="review-red-line"></div>
+        <div class="review-meta">
+            <span class="review-meta-label">Recent Guest</span>
+            <div class="review-stars">
+                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            </div>
+            <span class="review-meta-source">via Google</span>
+        </div>
+        <p class="review-text">"The room was beautiful! Clean and new. The bay view from the balcony was stunning, so peaceful. We'll be back."</p>
+        <div class="review-response-block">
+            <div class="review-resp-label"><i class="fas fa-reply" style="margin-right:0.4rem;"></i> Hotel Response</div>
+            <div class="review-resp-text">Thank you so much for your wonderful review! We're delighted you enjoyed the room and the view. Looking forward to welcoming you again. 🌊 — Lubang Bay Hotel</div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-row">
+        <div class="footer-address">
+            <i class="fas fa-map-pin"></i>
+            R682+CC9, Tilik Rd, Lubang, Occidental Mindoro
+        </div>
+        <div class="footer-missing">
+            <div class="missing-tag"><i class="fas fa-phone-alt"></i> Phone not listed</div>
+            <div class="missing-tag"><i class="fas fa-globe"></i> Website pending</div>
+        </div>
+        <div class="photo-tag">
+            <i class="fas fa-camera"></i> rooms · exterior · street view
+        </div>
+    </div>
+</div>
+
+<!-- MESSAGE ICON WATERMARK -->
+<div class="message-watermark">
+    <i class="fas fa-comment-dots"></i> 
+    <span>message us · Lubang Bay</span>
+</div>
+
+<!-- JavaScript for Hamburger Menu -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        
+        function toggleMenu() {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+            
+            // Animate hamburger to X
+            const spans = hamburger.querySelectorAll('span');
+            if (hamburger.classList.contains('active')) {
+                spans[0].style.transform = 'rotate(45deg) translate(8px, 8px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(8px, -8px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        }
+        
+        hamburger.addEventListener('click', toggleMenu);
+        menuOverlay.addEventListener('click', toggleMenu);
+        
+        // Close menu when clicking a link
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (mobileMenu.classList.contains('active')) {
+                    toggleMenu();
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

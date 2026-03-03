@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lubang Bay Hotel · Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --white-facade: #f5f2ee;
+            --wood-warm: #b87d4b;
+            --wood-light: #d4a06a;
+            --wood-pale: #e8c99a;
+            --sign-red: #c94b2a;
+            --sign-orange: #e05a30;
+            --sign-glow: rgba(201, 75, 42, 0.35);
+            --iron-dark: #1a1a1a;
+            --sky-dark: #2c3e4a;
+            --accent-strip: #c0874a;
+            --border: rgba(255,255,255,0.1);
+            --muted: rgba(255,255,255,0.5);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Jost', sans-serif;
+            background: var(--sky-dark);
+            color: var(--white-facade);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .bg-scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+        .bg-image {
+            position: absolute; inset: 0;
+            background: url('image.jpg') center 20%/cover no-repeat;
+            transform: scale(1.08);
+            animation: slowDrift 28s ease-in-out infinite alternate;
+            filter: brightness(0.52) saturate(0.8);
+        }
+        @keyframes slowDrift {
+            from { transform: scale(1.08) translateX(0); }
+            to   { transform: scale(1.12) translateX(-1.5%); }
+        }
+        .bg-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg,
+                rgba(44,62,74,0.60) 0%,
+                rgba(40,55,65,0.38) 30%,
+                rgba(28,40,48,0.65) 65%,
+                rgba(18,26,31,0.93) 100%
+            );
+        }
+        .bg-sign-glow {
+            position: absolute; top: 42%; left: 50%;
+            transform: translate(-50%,-50%);
+            width: 640px; height: 220px;
+            background: radial-gradient(ellipse, rgba(201,75,42,0.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .page { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* NAV */
+        nav {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 2rem 4rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            background: rgba(18,26,31,0.45);
+            backdrop-filter: blur(12px);
+            animation: fadeDown 0.8s ease both;
+        }
+        @keyframes fadeDown {
+            from { opacity:0; transform:translateY(-14px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        .nav-brand { display:flex; flex-direction:column; gap:2px; }
+        .nav-brand-name {
+            font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:500;
+            letter-spacing:0.1em; text-transform:uppercase; color:var(--white-facade);
+        }
+        .nav-brand-sub {
+            font-size:0.62rem; letter-spacing:0.22em; text-transform:uppercase;
+            color:var(--sign-orange); opacity:0.85;
+        }
+        .nav-links { display:flex; gap:2.8rem; }
+        .nav-links a {
+            font-size:0.75rem; letter-spacing:0.16em; text-transform:uppercase;
+            color:rgba(245,242,238,0.6); text-decoration:none; transition:color 0.2s;
+            position:relative;
+        }
+        .nav-links a::after {
+            content:''; position:absolute; bottom:-4px; left:0; right:0; height:1px;
+            background:var(--wood-warm); transform:scaleX(0); transform-origin:left; transition:transform 0.3s;
+        }
+        .nav-links a:hover { color:var(--white-facade); }
+        .nav-links a:hover::after { transform:scaleX(1); }
+        .book-btn {
+            font-family:'Jost',sans-serif; font-size:0.72rem; font-weight:500;
+            letter-spacing:0.18em; text-transform:uppercase;
+            color:var(--iron-dark);
+            background: linear-gradient(135deg, var(--wood-warm), var(--wood-light));
+            border:none; border-radius:2px; padding:0.78rem 2rem; cursor:pointer;
+            transition:0.2s; box-shadow:0 6px 20px rgba(184,125,75,0.3);
+        }
+        .book-btn:hover {
+            background:linear-gradient(135deg, var(--wood-light), var(--wood-pale));
+            transform:translateY(-1px);
+        }
+
+        /* BUILDING STRIP */
+        .building-strip {
+            height:3px; width:100%;
+            background:linear-gradient(90deg,
+                transparent 0%, var(--accent-strip) 15%, var(--wood-light) 45%,
+                var(--wood-warm) 55%, var(--accent-strip) 85%, transparent 100%
+            );
+            opacity:0.45;
+        }
+
+        /* GALLERY HERO */
+        .hero {
+            flex:1; padding:5rem 4rem 3rem;
+            max-width:1400px; width:100%; margin:0 auto;
+        }
+        .tag-row {
+            display:flex; align-items:center; gap:1.4rem;
+            margin-bottom:2rem; animation:fadeUp 0.9s 0.2s ease both;
+        }
+        .tag-pill {
+            font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase;
+            color:var(--white-facade);
+            border:1px solid rgba(201,75,42,0.35);
+            background:rgba(201, 74, 42, 0.336);
+            padding:0.32rem 1rem; border-radius:100px;
+            display:flex; align-items:center; gap:0.5rem;
+        }
+        .tag-pill i { font-size:0.55rem; }
+        .tag-dot { width:3px; height:3px; border-radius:50%; background:rgba(255,255,255,0.22); }
+        .tag-plain { font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase; color:SOLID rgba(255, 255, 255, 0.807) }
+        @keyframes fadeUp {
+            from { opacity:0; transform:translateY(20px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        .hero-title {
+            font-family:'Cormorant Garamond',serif; font-weight:300; line-height:0.94;
+            margin-bottom:1.6rem; animation:fadeUp 0.9s 0.32s ease both;
+        }
+        .hero-title .t1 {
+            font-size:clamp(4rem,8vw,7.5rem); display:block;
+            letter-spacing:-0.01em; color:var(--white-facade);
+        }
+        .hero-title .t2 {
+            font-size:clamp(2.8rem,5.5vw,5rem); display:block;
+            font-style:italic; font-weight:300; color:var(--sign-orange);
+            letter-spacing:0.02em;
+            text-shadow:0 0 40px var(--sign-glow), 0 0 80px rgba(201,75,42,0.12);
+        }
+        .hero-title .t3 {
+            font-size:clamp(1rem,2vw,1.6rem); display:block;
+            font-weight:300; letter-spacing:0.22em; text-transform:uppercase;
+            color:var(--wood-light); margin-top:1rem;
+        }
+        .hero-desc {
+            font-size:1rem; font-weight:300; line-height:1.75;
+            color:rgba(245,242,238,0.58); max-width:550px;
+            margin-bottom:2.5rem; animation:fadeUp 0.9s 0.48s ease both;
+        }
+
+        /* GALLERY GRID - images from /images folder: image1.jpg to image6.jpg */
+        .gallery-grid {
+            padding:2rem 4rem 4rem;
+            max-width:1400px; width:100%; margin:0 auto;
+            display:grid; grid-template-columns:repeat(3, 1fr);
+            gap:1.5rem;
+            animation:fadeUp 0.9s 0.58s ease both;
+        }
+        .gallery-item {
+            position:relative;
+            overflow:hidden;
+            aspect-ratio: 4/3;
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:3px;
+            background:rgba(18,26,31,0.7);
+            transition:transform 0.4s, border-color 0.3s;
+        }
+        .gallery-item:hover {
+            transform:translateY(-6px);
+            border-color:rgba(201,75,42,0.4);
+        }
+        .gallery-item img {
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+            transition:transform 0.5s;
+            opacity:0.9;
+        }
+        .gallery-item:hover img {
+            transform:scale(1.05);
+            opacity:1;
+        }
+        .gallery-caption {
+            position:absolute;
+            bottom:0; left:0; right:0;
+            background:linear-gradient(0deg, rgba(18,26,31,0.9) 0%, transparent 100%);
+            padding:1rem 1rem 0.8rem 1rem;
+            font-size:0.8rem;
+            font-weight:300;
+            color:rgba(245,242,238,0.7);
+            transform:translateY(100%);
+            transition:transform 0.3s ease;
+            backdrop-filter:blur(2px);
+            border-top:1px solid rgba(201,75,42,0.3);
+        }
+        .gallery-item:hover .gallery-caption {
+            transform:translateY(0);
+        }
+
+        /* SECOND GALLERY ROW (more images) */
+        .gallery-grid-second {
+            padding:0.5rem 4rem 4rem;
+            max-width:1400px; width:100%; margin:0 auto;
+            display:grid; grid-template-columns:repeat(3, 1fr);
+            gap:1.5rem;
+            animation:fadeUp 0.9s 0.68s ease both;
+        }
+
+        /* FOOTER (same as index) */
+        .footer-row {
+            border-top:1px solid rgba(255,255,255,0.06);
+            padding:1.8rem 4rem; max-width:1400px; width:100%; margin:0 auto;
+            display:flex; align-items:center; justify-content:space-between;
+            gap:2rem; flex-wrap:wrap;
+            animation:fadeUp 0.9s 0.88s ease both;
+        }
+        .footer-address { display:flex; align-items:center; gap:0.75rem; font-size:0.8rem; color:rgba(245,242,238,0.45); }
+        .footer-address i { color:var(--wood-light); font-size:0.7rem; }
+        .footer-missing { display:flex; gap:1.2rem; }
+        .missing-tag {
+            font-size:0.7rem; color:rgba(245,242,238,0.28);
+            border:1px dashed rgba(245,242,238,0.1);
+            padding:0.32rem 0.9rem; border-radius:100px;
+            display:flex; align-items:center; gap:0.45rem;
+        }
+        .missing-tag i { font-size:0.62rem; opacity:0.5; }
+        .photo-tag { font-size:0.7rem; color:rgba(245,242,238,0.38); display:flex; align-items:center; gap:0.45rem; }
+        .photo-tag i { color:var(--wood-warm); opacity:0.75; }
+
+        /* MESSAGE WATERMARK */
+        .message-watermark {
+            position:fixed; bottom:1rem; right:1.5rem;
+            font-size:0.7rem; letter-spacing:0.1em; color:rgba(245,242,238,0.5);
+            background:rgba(201, 75, 42, 0.25); 
+            backdrop-filter:blur(8px);
+            padding:0.4rem 1.2rem;
+            border-radius:60px;
+            border:1px solid rgba(255,255,255,0.15);
+            z-index:100;
+            display:flex;
+            align-items:center;
+            gap:0.6rem;
+            box-shadow:0 6px 16px rgba(0,0,0,0.3);
+        }
+        .message-watermark i {
+            color:var(--wood-pale);
+            font-size:0.85rem;
+            filter:drop-shadow(0 0 6px var(--sign-glow));
+        }
+
+        @media (max-width:900px) {
+            nav { padding:1.5rem 2rem; }
+            .nav-links { display:none; }
+            .hero { padding:3rem 2rem 2rem; }
+            .gallery-grid { grid-template-columns:1fr; padding:2rem; gap:1rem; }
+            .gallery-grid-second { grid-template-columns:1fr; padding:0 2rem 2rem; gap:1rem; }
+            .footer-row { padding:1.5rem 2rem; flex-direction:column; align-items:flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-scene">
+    <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
+    <div class="bg-sign-glow"></div>
+</div>
+
+<div class="page">
+    <nav>
+        <div class="nav-brand">
+            <span class="nav-brand-name">Lubang Bay Hotel</span>
+            <span class="nav-brand-sub">Occidental Mindoro · Gallery</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="rooms.html">Rooms</a>
+            <a href="gallery.html" style="color:var(--white-facade);">Gallery</a>
+            <a href="location.html">Location</a>
+            <a href="reviews.html">Reviews</a>
+        </div>
+        <button class="book-btn">Book Your Stay</button>
+    </nav>
+    <div class="building-strip"></div>
+
+    <!-- Gallery Hero -->
+    <section class="hero">
+        <div class="tag-row">
+            <div class="tag-pill"><i class="fas fa-camera"></i> Hotel Gallery</div>
+            <div class="tag-dot"></div>
+            <span class="tag-plain">Rooms · Exterior · Bay</span>
+            <div class="tag-dot"></div>
+            <span class="tag-plain">Visitor photos</span>
+        </div>
+        <h1 class="hero-title">
+            <span class="t1">Moments at</span>
+            <span class="t2">Lubang Bay</span>
+            <span class="t3">see the hotel through our lens</span>
+        </h1>
+        <p class="hero-desc">
+            Experience the warmth of our white facade, the calming bay views, and the simple luxury of our rooms. All images are from the actual property and guest captures.
+        </p>
+    </section>
+
+    <!-- GALLERY IMAGES - mula sa images folder: image1.jpg to image6.jpg -->
+    <div class="gallery-grid">
+        <div class="gallery-item">
+            <img src="images/image1.avif" alt="Lubang Bay Hotel exterior facade with warm lighting">
+            <div class="gallery-caption">🌅 Exterior · white facade at dusk</div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/image2.jpg" alt="Bay view from hotel balcony">
+            <div class="gallery-caption">🌊 Bay view from upper floor</div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/image3.jpg" alt="Modern hotel room with wooden accents">
+            <div class="gallery-caption">🛏️ Standard room · wood & linen</div>
+        </div>
+    </div>
+    <div class="gallery-grid-second">
+        <div class="gallery-item">
+            <img src="images/image4.jpg" alt="Hotel restaurant on ground floor">
+            <div class="gallery-caption">🍽️ Ground floor restaurant</div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/image5.jpg" alt="Sunset over the bay near Tilik Road">
+            <div class="gallery-caption">🌆 Sunset along Tilik Road</div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/image6.jpg" alt="Cozy balcony with iron railings and sea view">
+            <div class="gallery-caption">🏝️ Private balcony · bay breeze</div>
+        </div>
+    </div>
+
+    <!-- additional strip (decorative) -->
+    <div class="building-strip" style="margin-top:1rem;"></div>
+
+    <!-- FOOTER (same as index) -->
+    <div class="footer-row">
+        <div class="footer-address">
+            <i class="fas fa-map-pin"></i>
+            R682+CC9, Tilik Rd, Lubang, Occidental Mindoro
+        </div>
+        <div class="footer-missing">
+            <div class="missing-tag"><i class="fas fa-phone-alt"></i> Phone not listed</div>
+            <div class="missing-tag"><i class="fas fa-globe"></i> Website pending</div>
+        </div>
+        <div class="photo-tag">
+            <i class="fas fa-camera"></i> rooms · exterior · street view
+        </div>
+    </div>
+</div>
+
+<!-- MESSAGE ICON WATERMARK -->
+<div class="message-watermark">
+    <i class="fas fa-comment-dots"></i> 
+    <span>message us · Lubang Bay</span>
+</div>
+
+</body>
+</html>
